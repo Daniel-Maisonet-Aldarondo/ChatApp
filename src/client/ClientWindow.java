@@ -9,6 +9,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 
+
 import javax.swing.*;
 import java.util.Stack;
 
@@ -19,7 +20,7 @@ public class ClientWindow extends Application{
 
     public static void createClient() {
         String input = JOptionPane.showInputDialog("Enter name: ");
-        client = new Client(input,"localhost", 6969);
+        client = new Client(input,"localhost", 8000);
     }
     @Override
     public void start(Stage stage) {
@@ -35,6 +36,7 @@ public class ClientWindow extends Application{
         btn.setOnAction((event) -> {
             if(!field.getText().equals("")) {
                 client.send(field.getText());
+                client.sendToDB(field.getText());
                 field.setText("");
             }
                 });

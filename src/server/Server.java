@@ -3,7 +3,12 @@ package server;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import server.sql.Connect;
 
 public class Server {
 
@@ -79,10 +84,36 @@ public class Server {
             //Run connection
             String name = message.substring(message.indexOf(":") +1 );
             clients.add(new ClientInfo(name, ClientId++, packet.getAddress(), packet.getPort()));
+            //send user chat logs if any
+            sendChatLogs();
             broadcast("User " + name + ", Connected!");
+
             return true;
         }
         return false;
+    }
+
+    private static void sendChatLogs() {
+        Connection con = null;
+        Statement statement = null;
+        ResultSet rs = null;
+        String log;
+
+        try {
+            con = Connect.connectToDB();
+            statement = con.createStatement();
+            rs = statement.executeQuery("select * from Chat_Logs");
+
+            while(rs.next()) {
+                log = rs.getString("text");
+                broadcast(log);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            broadcast("Could not retrieve chat logs...");
+        }
+
     }
 
     private static void stop() {
