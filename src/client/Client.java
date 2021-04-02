@@ -41,6 +41,7 @@ public class Client {
         try {
             if (!message.startsWith("\\")) {
                 message = name + ": " + message;
+                sendToDB(message);
             }
             message += "\\e";
             byte[] data = message.getBytes();
@@ -52,7 +53,7 @@ public class Client {
         }
     }
 
-    public void sendToDB(String message) {
+    private void sendToDB(String message) {
         Connection con = null;
         Statement statement = null;
         ResultSet rs = null;
@@ -86,7 +87,6 @@ public class Client {
                         }
                     }
                     running = false;
-                    send("\\dis :");
 
                 }catch (Exception e) {
                     e.printStackTrace();
@@ -96,14 +96,15 @@ public class Client {
     }
 
     private static boolean isCommand(String message, DatagramPacket packet) {
-        if(message.startsWith("\\con:")) {
-            //Run connection
+        if(message.startsWith("\\dis:")) {
+            //do nothing because server handles the message
             return true;
         }
         return false;
     }
-//    public static void main(String[] args) {
-//        Client client = new Client("Test","localhost", 5050);
-//    }
+
+    public String getName() {
+        return name;
+    }
 }
 

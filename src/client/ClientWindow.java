@@ -36,10 +36,15 @@ public class ClientWindow extends Application{
         btn.setOnAction((event) -> {
             if(!field.getText().equals("")) {
                 client.send(field.getText());
-                client.sendToDB(field.getText());
+//                client.sendToDB(field.getText());
                 field.setText("");
             }
                 });
+        //handelling the disconnect from the chat room
+        stage.setOnCloseRequest(event -> {
+            client.send("\\dis: " + client.getName());
+
+        });
 
         root.getChildren().addAll(area,field,btn);
         field.setLayoutY(250.0);

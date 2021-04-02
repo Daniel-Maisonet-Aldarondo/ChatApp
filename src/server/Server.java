@@ -73,11 +73,7 @@ public class Server {
             }
         }; listenThread.start();
     }
-    /*
-     *   Server Command List
-     * \con:[name] -> connects client to server
-     * \dis:[id] -> disconnect from client
-     */
+
 
     private static boolean isCommand(String message, DatagramPacket packet) {
         if(message.startsWith("\\con:")) {
@@ -89,6 +85,16 @@ public class Server {
             broadcast("User " + name + ", Connected!");
 
             return true;
+        }
+        if(message.startsWith("\\dis:")) {
+            String name = message.substring(message.indexOf(":") + 1);
+            for(ClientInfo client : clients) {
+                if(client.getName().equals(name)) {
+                    clients.remove(client);
+                }
+            }
+            broadcast("User " + name + ", has Disconnected!");
+
         }
         return false;
     }
