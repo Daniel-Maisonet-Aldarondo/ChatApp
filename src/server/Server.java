@@ -61,7 +61,6 @@ public class Server {
                         //to get rid of extra bytes
                         message = message.substring(0, message.indexOf("\\e"));
 
-                        //MANAGE MESSAGE todo
                         if(!isCommand(message,packet)) {
                             broadcast(message);
                         }
@@ -79,9 +78,11 @@ public class Server {
         if(message.startsWith("\\con:")) {
             //Run connection
             String name = message.substring(message.indexOf(":") +1 );
-            clients.add(new ClientInfo(name, ClientId++, packet.getAddress(), packet.getPort()));
+            InetAddress address = packet.getAddress();
+            int port = packet.getPort();
+            clients.add(new ClientInfo(name, ClientId++, address, port));
             //send user chat logs if any
-            sendChatLogs();
+            sendChatLogs(address, port);
             broadcast("User " + name + ", Connected!");
 
             return true;
@@ -99,11 +100,11 @@ public class Server {
         return false;
     }
 
-    private static void sendChatLogs() {
+    private static void sendChatLogs(InetAddress address, int port) {
         Connection con = null;
         Statement statement = null;
         ResultSet rs = null;
-        String log;
+        String logs = "";
 
         try {
             con = Connect.connectToDB();
@@ -111,9 +112,9 @@ public class Server {
             rs = statement.executeQuery("select * from Chat_Logs");
 
             while(rs.next()) {
-                log = rs.getString("text");
-                broadcast(log);
+                logs += rs.getString("text") + "\n";
             }
+            send(logs, address, port);
 
         } catch (SQLException e) {
             e.printStackTrace();

@@ -36,7 +36,6 @@ public class ClientWindow extends Application{
         btn.setOnAction((event) -> {
             if(!field.getText().equals("")) {
                 client.send(field.getText());
-//                client.sendToDB(field.getText());
                 field.setText("");
             }
                 });

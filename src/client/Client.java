@@ -6,10 +6,7 @@ import server.sql.Connect;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class Client {
 
@@ -54,15 +51,19 @@ public class Client {
     }
 
     private void sendToDB(String message) {
+        // use the prepapared statement to avoid conflicts with escape character ex: '
         Connection con = null;
-        Statement statement = null;
+        PreparedStatement statement = null;
         ResultSet rs = null;
         String log;
 
         try {
             con = Connect.connectToDB();
-            statement = con.createStatement();
-            statement.executeUpdate("insert into Chat_Logs (text) values ('"+ message + "');");
+            String query = "insert into Chat_Logs values(?)";
+            statement = con.prepareStatement(query);
+            statement.setString(1,message);
+            statement.executeUpdate();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
