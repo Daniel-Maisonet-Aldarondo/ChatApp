@@ -41,7 +41,7 @@ public class ClientWindow extends Application{
                 });
         //handelling the disconnect from the chat room
         stage.setOnCloseRequest(event -> {
-            client.send("\\dis: " + client.getName());
+            client.send("\\dis:");
 
         });
 

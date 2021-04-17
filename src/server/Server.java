@@ -80,25 +80,31 @@ public class Server {
             String name = message.substring(message.indexOf(":") +1 );
             InetAddress address = packet.getAddress();
             int port = packet.getPort();
-            clients.add(new ClientInfo(name, ClientId++, address, port));
+            clients.add(new ClientInfo(name, ClientId++ , address, port));
             //send user chat logs if any
             sendChatLogs(address, port);
             broadcast("User " + name + ", Connected!");
-
             return true;
         }
         if(message.startsWith("\\dis:")) {
-            String name = message.substring(message.indexOf(":") + 1);
+            InetAddress address = packet.getAddress();
             for(ClientInfo client : clients) {
-                if(client.getName().equals(name)) {
+                if(client.getAddress().equals(address)){
+                    broadcast("User " + client.getName() + ", has Disconnected!");
                     clients.remove(client);
                 }
             }
-            broadcast("User " + name + ", has Disconnected!");
-
+            return true;
         }
         return false;
     }
+
+//    private static ClientInfo getClientInfo(String name, int id, InetAddress address, int port) {
+//        for(ClientInfo c : clients) {
+//            if( c.getName().equals(name)
+//            && c.getId() = )
+//        }
+//    }
 
     private static void sendChatLogs(InetAddress address, int port) {
         Connection con = null;
